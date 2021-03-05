@@ -5,17 +5,22 @@
 # Если в сообщении два или больше {random}, то они будут разными.
 # Чтобы они были одинакомыми, есть {fixedrandom}
 # Если есть {random} или {fixedrandom}, необходимо указать параметр random (см. команду roll)
+# В hover и click можно добавить {finalMessage}, это значит что при наведении дублируется то же сообщение, что и пишется в чат
 me:
   type: "text"
   format: "{player} {message}"
+  hover: "&a{player} {message}. Сделать так же - /me" # текст при наведении
+  click: "/me нажал на сообщени {player}'а" # если нажать, в чат предложится команда
   range: 50
 it:
   type: "text"
   format: "&7{message}"
   range: 150
 try:
-  type: "randomtext"
+  type: "random_text"
   range: 50
+  hover: "&a{finalMessage}. Сделать так же - /try"
+  click: "/try нажать на сообщение"
   # Шанс, желательно в процентах (для читабельности), но если будут шансы 80 и 70, или 10 и 9, то плагин поймёт, что шансы на самом деле примерно 55%/45%
   chances:
     "Текст 1": 80
@@ -27,6 +32,8 @@ todo:
   type: "split"
   split-by: " \\* " # Разделитель (regex). Тестировать здесь https://regexr.com/
   format: "{message 1}, - сказал {player}, {message 2}"
+  hover: "&a{message 1}, - сказал {player}, {message 2}. Сделать так же - /todo <действие 1> * <действие 2>"
+  click: "/todo действие 1 * действие 2"
 
 roll:
   type: "text"

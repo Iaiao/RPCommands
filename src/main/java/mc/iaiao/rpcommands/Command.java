@@ -1,12 +1,12 @@
 package mc.iaiao.rpcommands;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
-
-import org.bukkit.command.CommandExecutor;
 
 public class Command extends org.bukkit.command.Command {
     private CommandExecutor executor;
@@ -21,6 +21,8 @@ public class Command extends org.bukkit.command.Command {
             case TEXT: {
                 executor = new TextExecutor(
                         getString(plugin, "format"),
+                        getString(plugin, "hover"),
+                        getString(plugin, "click"),
                         getInt(plugin, "range"),
                         getInt(plugin, "random.default-min"),
                         getInt(plugin, "random.default-max"),
@@ -34,6 +36,8 @@ public class Command extends org.bukkit.command.Command {
             case RANDOM_TEXT: {
                 executor = new RandomTextExecutor(
                         getStringIntHashmap(plugin, "chances"),
+                        getString(plugin, "hover"),
+                        getString(plugin, "click"),
                         getInt(plugin, "range"),
                         getInt(plugin, "random.default-min"),
                         getInt(plugin, "random.default-max"),
@@ -47,6 +51,8 @@ public class Command extends org.bukkit.command.Command {
             case SPLIT: {
                 executor = new SplitExecutor(
                         getString(plugin, "format"),
+                        getString(plugin, "hover"),
+                        getString(plugin, "click"),
                         getInt(plugin, "range"),
                         getString(plugin, "split-by"),
                         getInt(plugin, "random.default-min"),
@@ -61,6 +67,10 @@ public class Command extends org.bukkit.command.Command {
         }
     }
     
+    private static String color(final String s) {
+        return ChatColor.translateAlternateColorCodes('&', s);
+    }
+
     public boolean execute(final CommandSender sender, final String s, final String[] args) {
         return executor.onCommand(sender, this, s, args);
     }
@@ -85,14 +95,9 @@ public class Command extends org.bukkit.command.Command {
         return color(Objects.requireNonNull(plugin.getConfig().getString(getName() + "." + path, "")));
     }
 
-    private static String color(final String s) {
-        return ChatColor.translateAlternateColorCodes('&', s);
-    }
-    
-    private enum CommandType
-    {
+    private enum     CommandType {
         TEXT,
-        RANDOM_TEXT, 
+        RANDOM_TEXT,
         SPLIT
     }
 }

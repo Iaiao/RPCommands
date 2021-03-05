@@ -2,6 +2,11 @@ package mc.iaiao.rpcommands;
 
 import java.util.*;
 
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.Bukkit;
@@ -14,6 +19,8 @@ import org.bukkit.command.CommandExecutor;
 
 public class RandomTextExecutor implements CommandExecutor {
     private final HashMap<String, Integer> formats;
+    private final String hoverFormat;
+    private final String suggestCommand;
     private final int range;
     private final int randomDefaultMin;
     private final int randomDefaultMax;
@@ -23,8 +30,10 @@ public class RandomTextExecutor implements CommandExecutor {
     private final String randomError;
     private final String randomInvalidNumber;
 
-    RandomTextExecutor(final HashMap<String, Integer> formats, final int range, final int randomDefaultMin, final int randomDefaultMax, final boolean randomInputRange, final int randomPlayerMin, final int randomPlayerMax, final String randomError, final String randomInvalidNumber) {
+    RandomTextExecutor(final HashMap<String, Integer> formats, String hoverFormat, String suggestCommand, final int range, final int randomDefaultMin, final int randomDefaultMax, final boolean randomInputRange, final int randomPlayerMin, final int randomPlayerMax, final String randomError, final String randomInvalidNumber) {
         this.formats = formats;
+        this.hoverFormat = hoverFormat;
+        this.suggestCommand = suggestCommand;
         this.range = range;
         this.randomDefaultMin = randomDefaultMin;
         this.randomDefaultMax = randomDefaultMax;
@@ -64,10 +73,22 @@ public class RandomTextExecutor implements CommandExecutor {
             }
             msg = msg.replaceAll("\\{fixedrandom}", String.valueOf((int) Math.floor(rndMin + Math.random() * (rndMax - rndMin))));
         } catch (NumberFormatException exception) {
-            msg = randomError;
+            sender.sendMessage(randomError);
+            return true;
         }
-        final String finalMsg = msg.replaceAll("\\{message}", message);
-        players.forEach(p -> p.sendMessage(finalMsg));
+        msg = msg.replaceAll("\\{message}", message);
+        TextComponent component = new TextComponent(msg);
+        if (!hoverFormat.isEmpty()) component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(
+                        hoverFormat
+                                .replaceAll("\\{message}", message)
+                                .replaceAll("\\{player}", sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName())
+                                .replaceAll("\\{finalMessage}", msg))));
+        if (!suggestCommand.isEmpty()) component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND,
+                suggestCommand
+                        .replaceAll("\\{message}", message.replaceAll("\u00A7[a-fA-F0-9k-oK-O]", ""))
+                        .replaceAll("\\{player}", sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName())
+                        .replaceAll("\\{finalMessage}", msg)));
+        players.forEach(p -> p.spigot().sendMessage(component));
         return true;
     }
 }

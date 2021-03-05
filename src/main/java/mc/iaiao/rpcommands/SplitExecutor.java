@@ -7,7 +7,13 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,6 +22,8 @@ import org.bukkit.entity.Player;
 
 public class SplitExecutor implements CommandExecutor {
     private final String format;
+    private final String hoverFormat;
+    private final String suggestCommand;
     private final int range;
     private final String splitBy;
     private final int randomDefaultMin;
@@ -26,8 +34,10 @@ public class SplitExecutor implements CommandExecutor {
     private final String randomError;
     private final String randomInvalidNumber;
 
-    SplitExecutor(String format, int range, String splitBy, int randomDefaultMin, int randomDefaultMax, boolean randomInputRange, int randomPlayerMin, int randomPlayerMax, String randomError, String randomInvalidNumber) {
+    SplitExecutor(String format, String hoverFormat, String suggestCommand, int range, String splitBy, int randomDefaultMin, int randomDefaultMax, boolean randomInputRange, int randomPlayerMin, int randomPlayerMax, String randomError, String randomInvalidNumber) {
         this.format = format;
+        this.hoverFormat = hoverFormat;
+        this.suggestCommand = suggestCommand;
         this.range = range;
         this.splitBy = splitBy;
         this.randomDefaultMin = randomDefaultMin;
@@ -61,9 +71,10 @@ public class SplitExecutor implements CommandExecutor {
             msg = msg.replaceAll("\\{fixedrandom}", String.valueOf((int)Math.floor((double)rndMin + Math.random() * (double)(rndMax - rndMin))));
         }
         catch (NumberFormatException ignored) {
-            msg = randomError;
+            sender.sendMessage(randomError);
+            return true;
         }
-        String finalMsg = SplitExecutor.replace(msg, Pattern.compile("\\{message \\d}"), m -> {
+        msg = SplitExecutor.replace(msg, Pattern.compile("\\{message \\d}"), m -> {
             String a = m.group();
             int n = Integer.parseInt(a.substring("{message ".length(), a.length() - "}".length()));
             if (messages.length < n) {
@@ -71,7 +82,20 @@ public class SplitExecutor implements CommandExecutor {
             }
             return messages[n - 1];
         });
-        players.forEach(p -> p.sendMessage(finalMsg));
+        msg = msg.replaceAll("\\{message}", message);
+        TextComponent component = new TextComponent(msg);
+        if (!hoverFormat.isEmpty()) component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(
+                ChatColor.translateAlternateColorCodes('&',
+                        hoverFormat
+                                .replaceAll("\\{message}", message)
+                                .replaceAll("\\{player}", sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName())
+                                .replaceAll("\\{finalMessage}", msg)))));
+        if (!suggestCommand.isEmpty()) component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND,
+                suggestCommand
+                        .replaceAll("\\{message}", message.replaceAll("\u00A7[a-fA-F0-9k-oK-O]", ""))
+                        .replaceAll("\\{player}", sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName())
+                        .replaceAll("\\{finalMessage}", msg)));
+        players.forEach(p -> p.spigot().sendMessage(component));
         return true;
     }
 
