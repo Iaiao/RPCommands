@@ -79,7 +79,7 @@ public class TextExecutor implements CommandExecutor {
                                 .replaceAll("\\{message}", message.replaceAll("\u00A7[a-fA-F0-9k-oK-O]", ""))
                                 .replaceAll("\\{player}", sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName())
                                 .replaceAll("\\{finalMessage}", msg)));
-        players.forEach(p -> p.spigot().sendMessage(component));
+        players.stream().filter(p -> p.hasPermission("rpcommands." + cmd.getName() + ".hear")).forEach(p -> p.spigot().sendMessage(component));
         return true;
     }
 }

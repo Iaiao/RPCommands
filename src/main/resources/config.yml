@@ -50,3 +50,4 @@ roll:
     invalid-player-range: "&cМожно вводить диапазоны от -100 до 1000"
 
 use permissions: on # Необходимо ли право rpcommands.<название>?
+# не влияет на право rpcommands.команда.hear
