@@ -78,7 +78,7 @@ public class Command extends org.bukkit.command.Command {
     public HashMap<String, Integer> getStringIntHashmap(final RPCommands plugin, final String path) {
         final HashMap<String, Integer> map = new HashMap<>();
         for (final String key : Objects.requireNonNull(plugin.getConfig().getConfigurationSection(getName() + "." + path)).getKeys(false)) {
-            map.put(key, getInt(plugin, path + "." + key));
+            map.put(ChatColor.translateAlternateColorCodes('&', key), getInt(plugin, path + "." + key));
         }
         return map;
     }
