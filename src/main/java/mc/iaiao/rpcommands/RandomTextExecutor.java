@@ -1,21 +1,18 @@
 package mc.iaiao.rpcommands;
 
-import java.util.*;
-
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.ChatColor;
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.Bukkit;
 
+import java.util.*;
 import java.util.stream.Collectors;
-
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.CommandExecutor;
 
 public class RandomTextExecutor implements CommandExecutor {
     private final HashMap<String, Integer> formats;
@@ -79,10 +76,10 @@ public class RandomTextExecutor implements CommandExecutor {
         msg = msg.replaceAll("\\{message}", message);
         TextComponent component = new TextComponent(msg);
         if (!hoverFormat.isEmpty()) component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(
-                        hoverFormat
-                                .replaceAll("\\{message}", message)
-                                .replaceAll("\\{player}", sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName())
-                                .replaceAll("\\{finalMessage}", msg))));
+                hoverFormat
+                        .replaceAll("\\{message}", message)
+                        .replaceAll("\\{player}", sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName())
+                        .replaceAll("\\{finalMessage}", msg))));
         if (!suggestCommand.isEmpty()) component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND,
                 suggestCommand
                         .replaceAll("\\{message}", message.replaceAll("\u00A7[a-fA-F0-9k-oK-O]", ""))

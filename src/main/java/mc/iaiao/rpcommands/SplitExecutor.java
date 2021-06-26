@@ -1,13 +1,5 @@
 package mc.iaiao.rpcommands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -19,6 +11,14 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class SplitExecutor implements CommandExecutor {
     private final String format;
@@ -49,12 +49,22 @@ public class SplitExecutor implements CommandExecutor {
         this.randomInvalidNumber = randomInvalidNumber;
     }
 
+    private static String replace(String input, Pattern regex, Function<Matcher, String> callback) {
+        StringBuilder resultString = new StringBuilder();
+        Matcher regexMatcher = regex.matcher(input);
+        while (regexMatcher.find()) {
+            regexMatcher.appendReplacement(resultString, callback.apply(regexMatcher));
+        }
+        regexMatcher.appendTail(resultString);
+        return resultString.toString();
+    }
+
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
         String message = Arrays.stream(args).skip(randomInputRange ? 2L : 0L).collect(Collectors.joining(" "));
         String[] messages = message.split(splitBy);
         List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
         if (sender instanceof Player && range > 0) {
-            players = ((Player)sender).getNearbyEntities(range, range, range).stream().filter(e -> e.getType() == EntityType.PLAYER).map(p -> (Player)p).collect(Collectors.toList());
+            players = ((Player) sender).getNearbyEntities(range, range, range).stream().filter(e -> e.getType() == EntityType.PLAYER).map(p -> (Player) p).collect(Collectors.toList());
             players.add((Player) sender);
         }
         String msg = format.replaceAll("\\{player}", sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName());
@@ -66,11 +76,10 @@ public class SplitExecutor implements CommandExecutor {
                 return true;
             }
             while (msg.contains("{random}")) {
-                msg = msg.replaceFirst("\\{random}", String.valueOf((int)Math.floor((double)rndMin + Math.random() * (double)(rndMax - rndMin))));
+                msg = msg.replaceFirst("\\{random}", String.valueOf((int) Math.floor((double) rndMin + Math.random() * (double) (rndMax - rndMin))));
             }
-            msg = msg.replaceAll("\\{fixedrandom}", String.valueOf((int)Math.floor((double)rndMin + Math.random() * (double)(rndMax - rndMin))));
-        }
-        catch (NumberFormatException ignored) {
+            msg = msg.replaceAll("\\{fixedrandom}", String.valueOf((int) Math.floor((double) rndMin + Math.random() * (double) (rndMax - rndMin))));
+        } catch (NumberFormatException ignored) {
             sender.sendMessage(randomError);
             return true;
         }
@@ -97,16 +106,6 @@ public class SplitExecutor implements CommandExecutor {
                         .replaceAll("\\{finalMessage}", msg)));
         players.stream().filter(p -> p.hasPermission("rpcommands." + cmd.getName() + ".hear")).forEach(p -> p.spigot().sendMessage(component));
         return true;
-    }
-
-    private static String replace(String input, Pattern regex, Function<Matcher, String> callback) {
-        StringBuffer resultString = new StringBuffer();
-        Matcher regexMatcher = regex.matcher(input);
-        while (regexMatcher.find()) {
-            regexMatcher.appendReplacement(resultString, callback.apply(regexMatcher));
-        }
-        regexMatcher.appendTail(resultString);
-        return resultString.toString();
     }
 }
 

@@ -1,10 +1,10 @@
 package mc.iaiao.rpcommands;
 
 import org.bukkit.command.CommandMap;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class RPCommands extends JavaPlugin {
     public void onEnable() {
@@ -19,7 +19,7 @@ public class RPCommands extends JavaPlugin {
             commands.register(cmd, command);
         }
     }
-    
+
     public CommandMap getCommandMap() {
         try {
             Field field = getServer().getClass().getDeclaredField("commandMap");

@@ -66,7 +66,7 @@ public class Command extends org.bukkit.command.Command {
             }
         }
     }
-    
+
     private static String color(final String s) {
         return ChatColor.translateAlternateColorCodes('&', s);
     }
@@ -95,7 +95,7 @@ public class Command extends org.bukkit.command.Command {
         return color(Objects.requireNonNull(plugin.getConfig().getString(getName() + "." + path, "")));
     }
 
-    private enum     CommandType {
+    private enum CommandType {
         TEXT,
         RANDOM_TEXT,
         SPLIT
