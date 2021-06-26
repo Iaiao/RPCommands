@@ -20,34 +20,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class SplitExecutor implements CommandExecutor {
-    private final String format;
-    private final String hoverFormat;
-    private final String suggestCommand;
-    private final int range;
-    private final String splitBy;
-    private final int randomDefaultMin;
-    private final int randomDefaultMax;
-    private final boolean randomInputRange;
-    private final int randomPlayerMin;
-    private final int randomPlayerMax;
-    private final String randomError;
-    private final String randomInvalidNumber;
-
-    SplitExecutor(String format, String hoverFormat, String suggestCommand, int range, String splitBy, int randomDefaultMin, int randomDefaultMax, boolean randomInputRange, int randomPlayerMin, int randomPlayerMax, String randomError, String randomInvalidNumber) {
-        this.format = format;
-        this.hoverFormat = hoverFormat;
-        this.suggestCommand = suggestCommand;
-        this.range = range;
-        this.splitBy = splitBy;
-        this.randomDefaultMin = randomDefaultMin;
-        this.randomDefaultMax = randomDefaultMax;
-        this.randomInputRange = randomInputRange;
-        this.randomPlayerMin = randomPlayerMin;
-        this.randomPlayerMax = randomPlayerMax;
-        this.randomError = randomError;
-        this.randomInvalidNumber = randomInvalidNumber;
-    }
+public record SplitExecutor(String format, String hoverFormat, String suggestCommand,
+                            int range, String splitBy, int randomDefaultMin, int randomDefaultMax,
+                            boolean randomInputRange, int randomPlayerMin, int randomPlayerMax,
+                            String randomError,
+                            String randomInvalidNumber) implements CommandExecutor {
 
     private static String replace(String input, Pattern regex, Function<Matcher, String> callback) {
         StringBuilder resultString = new StringBuilder();

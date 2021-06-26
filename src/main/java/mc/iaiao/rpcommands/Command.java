@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class Command extends org.bukkit.command.Command {
-    private CommandExecutor executor;
+    private final CommandExecutor executor;
 
     protected Command(final String name, final String type, final RPCommands plugin) {
         super(name, "Команда /" + name, "/" + name + " <текст>", Collections.emptyList());
@@ -17,54 +17,45 @@ public class Command extends org.bukkit.command.Command {
         if (plugin.getConfig().getBoolean("use permissions")) {
             setPermission("rpcommands." + name);
         }
-        switch (type1) {
-            case TEXT: {
-                executor = new TextExecutor(
-                        getString(plugin, "format"),
-                        getString(plugin, "hover"),
-                        getString(plugin, "click"),
-                        getInt(plugin, "range"),
-                        getInt(plugin, "random.default-min"),
-                        getInt(plugin, "random.default-max"),
-                        getBoolean(plugin, "random.input-range"),
-                        getInt(plugin, "random.player-min"),
-                        getInt(plugin, "random.player-max"),
-                        getString(plugin, "random.error"),
-                        getString(plugin, "random.invalid-player-range"));
-                break;
-            }
-            case RANDOM_TEXT: {
-                executor = new RandomTextExecutor(
-                        getStringIntHashmap(plugin, "chances"),
-                        getString(plugin, "hover"),
-                        getString(plugin, "click"),
-                        getInt(plugin, "range"),
-                        getInt(plugin, "random.default-min"),
-                        getInt(plugin, "random.default-max"),
-                        getBoolean(plugin, "random.input-range"),
-                        getInt(plugin, "random.player-min"),
-                        getInt(plugin, "random.player-max"),
-                        getString(plugin, "random.error"),
-                        getString(plugin, "random.invalid-player-range"));
-                break;
-            }
-            case SPLIT: {
-                executor = new SplitExecutor(
-                        getString(plugin, "format"),
-                        getString(plugin, "hover"),
-                        getString(plugin, "click"),
-                        getInt(plugin, "range"),
-                        getString(plugin, "split-by"),
-                        getInt(plugin, "random.default-min"),
-                        getInt(plugin, "random.default-max"),
-                        getBoolean(plugin, "random.input-range"),
-                        getInt(plugin, "random.player-min"),
-                        getInt(plugin, "random.player-max"),
-                        getString(plugin, "random.error"),
-                        getString(plugin, "random.invalid-player-range"));
-                break;
-            }
-        }
+        executor = switch (type1) {
+            case TEXT -> new TextExecutor(
+                    getString(plugin, "format"),
+                    getString(plugin, "hover"),
+                    getString(plugin, "click"),
+                    getInt(plugin, "range"),
+                    getInt(plugin, "random.default-min"),
+                    getInt(plugin, "random.default-max"),
+                    getBoolean(plugin, "random.input-range"),
+                    getInt(plugin, "random.player-min"),
+                    getInt(plugin, "random.player-max"),
+                    getString(plugin, "random.error"),
+                    getString(plugin, "random.invalid-player-range"));
+            case RANDOM_TEXT -> new RandomTextExecutor(
+                    getStringIntHashmap(plugin, "chances"),
+                    getString(plugin, "hover"),
+                    getString(plugin, "click"),
+                    getInt(plugin, "range"),
+                    getInt(plugin, "random.default-min"),
+                    getInt(plugin, "random.default-max"),
+                    getBoolean(plugin, "random.input-range"),
+                    getInt(plugin, "random.player-min"),
+                    getInt(plugin, "random.player-max"),
+                    getString(plugin, "random.error"),
+                    getString(plugin, "random.invalid-player-range"));
+            case SPLIT -> new SplitExecutor(
+                    getString(plugin, "format"),
+                    getString(plugin, "hover"),
+                    getString(plugin, "click"),
+                    getInt(plugin, "range"),
+                    getString(plugin, "split-by"),
+                    getInt(plugin, "random.default-min"),
+                    getInt(plugin, "random.default-max"),
+                    getBoolean(plugin, "random.input-range"),
+                    getInt(plugin, "random.player-min"),
+                    getInt(plugin, "random.player-max"),
+                    getString(plugin, "random.error"),
+                    getString(plugin, "random.invalid-player-range"));
+        };
     }
 
     private static String color(final String s) {

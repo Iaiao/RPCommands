@@ -16,32 +16,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TextExecutor implements CommandExecutor {
-    private final String format;
-    private final String hoverFormat;
-    private final String suggestCommand;
-    private final int range;
-    private final int randomDefaultMin;
-    private final int randomDefaultMax;
-    private final boolean randomInputRange;
-    private final int randomPlayerMin;
-    private final int randomPlayerMax;
-    private final String randomError;
-    private final String randomInvalidNumber;
-
-    TextExecutor(final String format, String hoverFormat, String suggestCommand, final int range, final int randomDefaultMin, final int randomDefaultMax, final boolean randomInputRange, final int randomPlayerMin, final int randomPlayerMax, final String randomError, final String randomInvalidNumber) {
-        this.format = format;
-        this.hoverFormat = hoverFormat;
-        this.suggestCommand = suggestCommand;
-        this.range = range;
-        this.randomDefaultMin = randomDefaultMin;
-        this.randomDefaultMax = randomDefaultMax;
-        this.randomInputRange = randomInputRange;
-        this.randomPlayerMin = randomPlayerMin;
-        this.randomPlayerMax = randomPlayerMax;
-        this.randomError = randomError;
-        this.randomInvalidNumber = randomInvalidNumber;
-    }
+public record TextExecutor(String format, String hoverFormat, String suggestCommand,
+                           int range, int randomDefaultMin, int randomDefaultMax, boolean randomInputRange,
+                           int randomPlayerMin, int randomPlayerMax, String randomError,
+                           String randomInvalidNumber) implements CommandExecutor {
 
     public boolean onCommand(final CommandSender sender, final Command cmd, final String s, final String[] args) {
         String message = Arrays.stream(args).skip(randomInputRange ? 2L : 0L).collect(Collectors.joining(" "));
@@ -69,15 +47,15 @@ public class TextExecutor implements CommandExecutor {
         msg = msg.replaceAll("\\{message}", message);
         TextComponent component = new TextComponent(msg);
         if (!hoverFormat.isEmpty()) component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(
-                        hoverFormat
-                                .replaceAll("\\{message}", message)
-                                .replaceAll("\\{player}", sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName())
-                                .replaceAll("\\{finalMessage}", msg))));
+                hoverFormat
+                        .replaceAll("\\{message}", message)
+                        .replaceAll("\\{player}", sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName())
+                        .replaceAll("\\{finalMessage}", msg))));
         if (!suggestCommand.isEmpty()) component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND,
-                        suggestCommand
-                                .replaceAll("\\{message}", message.replaceAll("\u00A7[a-fA-F0-9k-oK-O]", ""))
-                                .replaceAll("\\{player}", sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName())
-                                .replaceAll("\\{finalMessage}", msg)));
+                suggestCommand
+                        .replaceAll("\\{message}", message.replaceAll("\u00A7[a-fA-F0-9k-oK-O]", ""))
+                        .replaceAll("\\{player}", sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName())
+                        .replaceAll("\\{finalMessage}", msg)));
         players.stream().filter(p -> p.hasPermission("rpcommands." + cmd.getName() + ".hear")).forEach(p -> p.spigot().sendMessage(component));
         return true;
     }

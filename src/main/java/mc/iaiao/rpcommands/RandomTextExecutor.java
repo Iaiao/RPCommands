@@ -14,32 +14,11 @@ import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RandomTextExecutor implements CommandExecutor {
-    private final HashMap<String, Integer> formats;
-    private final String hoverFormat;
-    private final String suggestCommand;
-    private final int range;
-    private final int randomDefaultMin;
-    private final int randomDefaultMax;
-    private final boolean randomInputRange;
-    private final int randomPlayerMin;
-    private final int randomPlayerMax;
-    private final String randomError;
-    private final String randomInvalidNumber;
-
-    RandomTextExecutor(final HashMap<String, Integer> formats, String hoverFormat, String suggestCommand, final int range, final int randomDefaultMin, final int randomDefaultMax, final boolean randomInputRange, final int randomPlayerMin, final int randomPlayerMax, final String randomError, final String randomInvalidNumber) {
-        this.formats = formats;
-        this.hoverFormat = hoverFormat;
-        this.suggestCommand = suggestCommand;
-        this.range = range;
-        this.randomDefaultMin = randomDefaultMin;
-        this.randomDefaultMax = randomDefaultMax;
-        this.randomInputRange = randomInputRange;
-        this.randomPlayerMin = randomPlayerMin;
-        this.randomPlayerMax = randomPlayerMax;
-        this.randomError = randomError;
-        this.randomInvalidNumber = randomInvalidNumber;
-    }
+public record RandomTextExecutor(HashMap<String, Integer> formats,
+                                 String hoverFormat, String suggestCommand, int range,
+                                 int randomDefaultMin, int randomDefaultMax, boolean randomInputRange,
+                                 int randomPlayerMin, int randomPlayerMax, String randomError,
+                                 String randomInvalidNumber) implements CommandExecutor {
 
     public boolean onCommand(final CommandSender sender, final Command cmd, final String s, final String[] args) {
         String message = Arrays.stream(args).skip(randomInputRange ? 2L : 0L).collect(Collectors.joining(" "));
