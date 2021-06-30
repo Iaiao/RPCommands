@@ -12,7 +12,7 @@ public class Command extends org.bukkit.command.Command {
     private final CommandExecutor executor;
 
     protected Command(final String name, final String type, final RPCommands plugin) {
-        super(name, "Команда /" + name, "/" + name + " <текст>", Collections.emptyList());
+        super(name, "Command /" + name, "/" + name + " <message>", Collections.emptyList());
         CommandType type1 = CommandType.valueOf(type.toUpperCase());
         if (plugin.getConfig().getBoolean("use permissions")) {
             setPermission("rpcommands." + name);
