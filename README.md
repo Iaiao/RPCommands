@@ -1,3 +1,8 @@
+# RPCommands
+You can make your own simple (and not so simple) commands that will make your chat more interesting.
+
+Everything is explained in config.yml.
+```yaml
 # Here you can create your own commands.
 # {player} and {message} are replaced with player's name and message is everything after /command
 # For example, Iaiao ran /me is working, format is "* {player} {message}", then it should say "* Iaiao is working"
@@ -52,3 +57,6 @@ roll:
 
 use permissions: on # Do we need rpcommands.<command name> permission?
 # note: you still rpcommands.<command name>.hear permission
+```
+
+This plugin should work on almost all Minecraft versions, I just haven't tested them all.
