@@ -51,4 +51,4 @@ roll:
     invalid-player-range: "&cYou can specify range only from -1000 to 1000"
 
 use permissions: on # Do we need rpcommands.<command name> permission?
-# note: you still rpcommands.<command name>.hear permission
+# note: you still need rpcommands.<command name>.hear permission
